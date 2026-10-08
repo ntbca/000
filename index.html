@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>營業人稅籍登記應檢附文件互動檢索系統</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .step-active {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+        }
+        .step-inactive {
+            border-color: #e2e8f0;
+            background-color: #ffffff;
+            color: #64748b;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-5xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-blue-400"></i>
+                        營業人稅籍登記應檢附文件檢索系統
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">依國稅局最新規範編製 ‧ 3 步驟快速對照所需文件與注意事項</p>
+                </div>
+                <span class="hidden sm:inline-block bg-blue-900/60 text-blue-300 text-xs px-3 py-1.5 rounded-full border border-blue-700/50">
+                    <i class="fa-solid fa-circle-info mr-1"></i> 財政部國稅局指引版
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- Visual Step Bar -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
+            <div id="step-btn-1" onclick="jumpToStep(1)" class="cursor-pointer step-active border-2 rounded-xl p-3 sm:p-4 text-center transition-all duration-200 shadow-sm flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span class="w-7 h-7 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shrink-0">1</span>
+                <span class="font-bold text-xs sm:text-base">1. 選擇組織型態</span>
+            </div>
+            <div id="step-btn-2" onclick="jumpToStep(2)" class="cursor-pointer step-inactive border-2 rounded-xl p-3 sm:p-4 text-center transition-all duration-200 shadow-sm flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span class="w-7 h-7 rounded-full bg-slate-300 text-slate-700 font-bold flex items-center justify-center text-sm shrink-0">2</span>
+                <span class="font-bold text-xs sm:text-base">2. 主管機關核准</span>
+            </div>
+            <div id="step-btn-3" onclick="jumpToStep(3)" class="cursor-pointer step-inactive border-2 rounded-xl p-3 sm:p-4 text-center transition-all duration-200 shadow-sm flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span class="w-7 h-7 rounded-full bg-slate-300 text-slate-700 font-bold flex items-center justify-center text-sm shrink-0">3</span>
+                <span class="font-bold text-xs sm:text-base">3. 申辦稅籍與檢核</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Select Entity Type -->
+        <section id="step-1" class="animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap text-blue-600"></i> 請選擇您的營業組織類型：
+                </h2>
+                <p class="text-sm text-slate-500 mb-4">系統將根據您選擇的組織型態，自動帶出應檢附的文件與核准機關。</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label class="border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition duration-150 flex items-start gap-3">
+                        <input type="radio" name="entityType" value="company" class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500" onchange="selectEntity('company')" checked>
+                        <div>
+                            <div class="font-bold text-slate-900"><i class="fa-solid fa-building text-blue-600 mr-1.5"></i>公司組織</div>
+                            <div class="text-xs text-slate-500 mt-1">股份有限公司、有限公司、閉鎖型公司、分公司等。</div>
+                        </div>
+                    </label>
+
+                    <label class="border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition duration-150 flex items-start gap-3">
+                        <input type="radio" name="entityType" value="sole" class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500" onchange="selectEntity('sole')">
+                        <div>
+                            <div class="font-bold text-slate-900"><i class="fa-solid fa-store text-emerald-600 mr-1.5"></i>獨資與合夥事業</div>
+                            <div class="text-xs text-slate-500 mt-1">商號、行號、工作室、合夥事業等。</div>
+                        </div>
+                    </label>
+
+                    <label class="hidden border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition duration-150 flex items-start gap-3">
+                        <input type="radio" name="entityType" value="professional" class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500" onchange="selectEntity('professional')">
+                        <div>
+                            <div class="font-bold text-slate-900"><i class="fa-solid fa-user-tie text-purple-600 mr-1.5"></i>執行業務者 / 其他扣繳單位</div>
+                            <div class="text-xs text-slate-500 mt-1">律師/會計師事務所、診所、補習班、人民團體等。</div>
+                        </div>
+                    </label>
+
+                    <label class="border-2 border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50/50 transition duration-150 flex items-start gap-3">
+                        <input type="radio" name="entityType" value="special" class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500" onchange="selectEntity('special')">
+                        <div>
+                            <div class="font-bold text-slate-900"><i class="fa-solid fa-robot text-amber-600 mr-1.5"></i>特殊型態 / 外國事業</div>
+                            <div class="text-xs text-slate-500 mt-1">自動販賣機銷售、無實體店面網路銷售、外國事業在台營業等。</div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button onclick="goToStep(2)" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg shadow-sm transition flex items-center gap-2">
+                        下一步：查看主管機關 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Competent Authority -->
+        <section id="step-2" class="hidden animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-landmark text-blue-600"></i> 主管機關核准管道與流程：
+                </h2>
+                <div id="authority-content" class="bg-slate-50 border border-slate-200 rounded-lg p-4 my-4">
+                    <!-- Dynamic Authority Content -->
+                </div>
+
+                <div class="mt-6 flex justify-between">
+                    <button onclick="goToStep(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-5 py-2.5 rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> 上一步
+                    </button>
+                    <button onclick="goToStep(3)" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg shadow-sm transition flex items-center gap-2">
+                        下一步：生成檢核表 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Checklist & Document Verification -->
+        <section id="step-3" class="hidden animate-fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-blue-600"></i> 應檢附文件自主檢核表
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">請勾選已準備齊全之文件，並參閱備註與切結說明。</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3 py-2 rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-print"></i> 列印檢核表
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info Banner -->
+                <div class="bg-amber-50 border-l-4 border-amber-500 text-amber-900 p-3.5 rounded-r-lg text-xs sm:text-sm mb-6 flex items-start gap-2.5">
+                    <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                    <div>
+                        <div class="font-bold mb-1">提醒</div>
+                        <div>以下清單為系統依目前選擇的組織型態整理之檢核項目，實際受理時仍請依主管機關最新規定確認。</div>
+                    </div>
+                </div>
+
+                <div id="checklist-content" class="space-y-3"></div>
+
+                <div class="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between gap-4">
+                    <div class="text-sm text-slate-500">
+                        已完成 <span id="completed-count" class="font-bold text-blue-600">0</span> / <span id="total-count" class="font-bold">0</span> 項
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="clearChecklist()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition">
+                            清除勾選
+                        </button>
+                        <button onclick="goToStep(2)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-5 py-2 rounded-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> 上一步
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-xs py-4 mt-auto">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            營業人稅籍登記應檢附文件檢索系統
+        </div>
+    </footer>
+
+    <style>
+        @media print {
+            body { background: #fff !important; }
+            header, footer, #step-btn-1, #step-btn-2, #step-btn-3,
+            #step-1, #step-2, button { display: none !important; }
+            main { max-width: none !important; padding: 0 !important; }
+            #step-3 { display: block !important; }
+            #step-3 > div { box-shadow: none !important; border: 0 !important; }
+        }
+    </style>
+
+    <script>
+        'use strict';
+
+        const ENTITY_CONFIG = {
+            company: {
+                name: '公司組織',
+                authority: {
+                    title: '公司組織：先完成公司相關設立／變更程序，再依規定辦理稅籍登記。',
+                    steps: [
+                        '確認公司型態與應辦理之設立程序。',
+                        '取得主管機關核准或登記相關文件。',
+                        '備妥稅籍登記所需資料，再向所在地稽徵機關辦理。'
+                    ]
+                },
+                documents: [
+                    ['主管機關最新核准設立文件影本', '請提供目前有效之核准／登記文件。'],
+                    ['負責人身分證明文件', '依實際申辦規定備妥。'],
+                    ['營業場所相關文件', '例如租賃契約或其他可證明使用權之文件，依個案準備。'],
+                    ['其他依法應檢附之文件', '依營業項目、組織型態及個案情形確認。']
+                ]
+            },
+            sole: {
+                name: '獨資與合夥事業',
+                authority: {
+                    title: '獨資與合夥事業：先完成商業登記等相關程序，再依規定辦理稅籍登記。',
+                    steps: [
+                        '確認商號、行號或合夥事業之組織型態。',
+                        '取得主管機關核准或登記相關文件。',
+                        '備妥稅籍登記所需資料，再向所在地稽徵機關辦理。'
+                    ]
+                },
+                documents: [
+                    ['主管機關最新核准設立文件影本', '請提供目前有效之核准／登記文件。'],
+                    ['負責人或合夥人身分證明文件', '依實際申辦規定備妥。'],
+                    ['營業場所相關文件', '依實際使用情形備妥。'],
+                    ['其他依法應檢附之文件', '依營業項目及個案情形確認。']
+                ]
+            },
+            professional: {
+                name: '執行業務者 / 其他扣繳單位',
+                authority: {
+                    title: '執行業務者及其他扣繳單位：依其所屬業別及設立規定完成相關核准／登記程序。',
+                    steps: [
+                        '確認所屬業別及應取得之主管機關核准或證照。',
+                        '備妥最新核准、登記或設立文件。',
+                        '依規定辦理稅籍或相關扣繳單位資料建檔。'
+                    ]
+                },
+                documents: [
+                    ['主管機關最新核准設立／登記文件影本', '依業別提供有效文件。'],
+                    ['負責人、代表人或執行業務者身分證明文件', '依個案準備。'],
+                    ['營業場所或執業場所相關文件', '依實際情形備妥。'],
+                    ['其他依法應檢附之文件', '依業別及個案情形確認。']
+                ]
+            },
+            special: {
+                name: '特殊型態 / 外國事業',
+                authority: {
+                    title: '特殊型態或外國事業：依營業型態及身分確認應辦理的核准、登記或申報程序。',
+                    steps: [
+                        '確認實際營業型態（例如網路銷售、自動販賣或外國事業在臺營業）。',
+                        '確認是否另有特定主管機關之核准、登記或許可。',
+                        '依個案備妥資料後，再辦理稅籍相關申請。'
+                    ]
+                },
+                documents: [
+                    ['主管機關最新核准／登記／許可文件影本', '依實際營業型態提供。'],
+                    ['負責人、代表人或外國事業相關身分文件', '依個案準備。'],
+                    ['營業場所、平台或交易相關證明文件', '視營業型態提供。'],
+                    ['其他依法應檢附之文件', '依個案及最新規定確認。']
+                ]
+            }
+        };
+
+        let currentEntity = 'company';
+        let currentStep = 1;
+
+        function selectEntity(type) {
+            if (!ENTITY_CONFIG[type]) return;
+            currentEntity = type;
+            renderAuthority();
+            renderChecklist();
+        }
+
+        function getSelectedEntity() {
+            const checked = document.querySelector('input[name="entityType"]:checked');
+            return checked ? checked.value : currentEntity;
+        }
+
+        function renderAuthority() {
+            const container = document.getElementById('authority-content');
+            const config = ENTITY_CONFIG[currentEntity];
+            if (!container || !config) return;
+
+            const items = config.authority.steps.map((step, index) => `
+                <div class="flex items-start gap-3 ${index < config.authority.steps.length - 1 ? 'mb-3' : ''}">
+                    <span class="w-7 h-7 shrink-0 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm">${index + 1}</span>
+                    <div class="text-sm text-slate-700 pt-1">${escapeHtml(step)}</div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="font-bold text-slate-900 mb-4">${escapeHtml(config.authority.title)}</div>
+                ${items}
+            `;
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-content');
+            const config = ENTITY_CONFIG[currentEntity];
+            if (!container || !config) return;
+
+            container.innerHTML = config.documents.map((doc, index) => `
+                <label class="block border border-slate-200 rounded-lg p-4 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" class="check-item mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500" data-index="${index}">
+                        <div class="flex-1">
+                            <div class="font-medium text-slate-800">${index + 1}. ${escapeHtml(doc[0])}</div>
+                            <div class="text-xs text-slate-500 mt-1">${escapeHtml(doc[1])}</div>
+                        </div>
+                    </div>
+                </label>
+            `).join('');
+
+            container.querySelectorAll('.check-item').forEach(input => {
+                input.addEventListener('change', updateProgress);
+            });
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const items = Array.from(document.querySelectorAll('.check-item'));
+            const completed = items.filter(item => item.checked).length;
+            const completedEl = document.getElementById('completed-count');
+            const totalEl = document.getElementById('total-count');
+
+            if (completedEl) completedEl.textContent = completed;
+            if (totalEl) totalEl.textContent = items.length;
+        }
+
+        function clearChecklist() {
+            document.querySelectorAll('.check-item').forEach(item => {
+                item.checked = false;
+            });
+            updateProgress();
+        }
+
+        function goToStep(step) {
+            step = Number(step);
+            if (![1, 2, 3].includes(step)) return;
+
+            currentEntity = getSelectedEntity();
+            renderAuthority();
+            renderChecklist();
+
+            document.querySelectorAll('main section[id^="step-"]').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            const target = document.getElementById(`step-${step}`);
+            if (target) target.classList.remove('hidden');
+
+            updateStepButtons(step);
+            currentStep = step;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function jumpToStep(step) {
+            goToStep(step);
+        }
+
+        function updateStepButtons(activeStep) {
+            for (let i = 1; i <= 3; i++) {
+                const button = document.getElementById(`step-btn-${i}`);
+                if (!button) continue;
+
+                const number = button.querySelector('span');
+                button.classList.toggle('step-active', i === activeStep);
+                button.classList.toggle('step-inactive', i !== activeStep);
+
+                if (number) {
+                    number.classList.remove('bg-blue-600', 'text-white', 'bg-slate-300', 'text-slate-700');
+                    if (i === activeStep) {
+                        number.classList.add('bg-blue-600', 'text-white');
+                    } else {
+                        number.classList.add('bg-slate-300', 'text-slate-700');
+                    }
+                }
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            currentEntity = getSelectedEntity();
+            renderAuthority();
+            renderChecklist();
+            updateStepButtons(1);
+        });
+    </script>
+</body>
+</html>
